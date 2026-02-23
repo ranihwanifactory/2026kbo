@@ -7,6 +7,8 @@ export interface Team {
   color: string;
   logo: string;
   description: string;
+  foundedYear: number;
+  championships: string;
 }
 
 export interface GameSchedule {

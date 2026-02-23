@@ -251,6 +251,13 @@ export default function App() {
                           <div className="flex items-center gap-1 text-xs font-bold bg-slate-100 text-slate-500 px-3 py-1.5 rounded-full">
                             <Info size={12} /> {team.stadium}
                           </div>
+                          <div className="flex items-center gap-1 text-xs font-bold bg-slate-100 text-slate-500 px-3 py-1.5 rounded-full">
+                            <Calendar size={12} /> 창단: {team.foundedYear}년
+                          </div>
+                        </div>
+                        <div className="mt-4 p-3 bg-kbo-blue/5 rounded-xl border border-kbo-blue/10">
+                          <p className="text-[10px] font-bold text-kbo-blue uppercase tracking-widest mb-1">우승 횟수(연도)</p>
+                          <p className="text-sm font-bold text-slate-700">{team.championships}</p>
                         </div>
                       </div>
                     </div>

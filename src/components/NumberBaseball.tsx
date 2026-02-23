@@ -7,7 +7,10 @@ export default function NumberBaseball() {
   const [guess, setGuess] = useState<string>('');
   const [logs, setLogs] = useState<{ guess: string; strike: number; ball: number }[]>([]);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [isVictory, setIsVictory] = useState(false);
   const [message, setMessage] = useState('4자리 숫자를 맞춰보세요!');
+
+  const MAX_ATTEMPTS = 10;
 
   useEffect(() => {
     initGame();
@@ -25,13 +28,23 @@ export default function NumberBaseball() {
     setLogs([]);
     setGuess('');
     setIsGameOver(false);
+    setIsVictory(false);
     setMessage('새 게임이 시작되었습니다!');
   };
 
   const handleGuess = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isGameOver) return;
+    
     if (guess.length !== 4 || isNaN(Number(guess))) {
       setMessage('4자리 숫자를 입력해주세요.');
+      return;
+    }
+
+    // Check for duplicate numbers in guess
+    const uniqueDigits = new Set(guess.split(''));
+    if (uniqueDigits.size !== 4) {
+      setMessage('서로 다른 4자리 숫자를 입력해주세요.');
       return;
     }
 
@@ -48,30 +61,41 @@ export default function NumberBaseball() {
     });
 
     const newLog = { guess, strike, ball };
-    setLogs([newLog, ...logs]);
+    const updatedLogs = [newLog, ...logs];
+    setLogs(updatedLogs);
     setGuess('');
 
     if (strike === 4) {
       setIsGameOver(true);
+      setIsVictory(true);
       setMessage('홈런! 축하합니다!');
+    } else if (updatedLogs.length >= MAX_ATTEMPTS) {
+      setIsGameOver(true);
+      setIsVictory(false);
+      setMessage('아쉽네요. 기회를 모두 사용했습니다.');
     } else {
       setMessage(`${strike} 스트라이크, ${ball} 볼입니다.`);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 glass-card rounded-3xl">
+    <div className="max-w-md mx-auto p-6 glass-card rounded-3xl relative overflow-hidden">
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-display font-bold flex items-center gap-2">
           <Trophy className="text-yellow-500" /> 숫자 야구
         </h2>
-        <button
-          onClick={initGame}
-          className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-          title="다시 시작"
-        >
-          <RotateCcw size={20} />
-        </button>
+        <div className="flex items-center gap-4">
+          <span className="text-xs font-bold text-slate-400">
+            기회: {MAX_ATTEMPTS - logs.length} / {MAX_ATTEMPTS}
+          </span>
+          <button
+            onClick={initGame}
+            className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+            title="다시 시작"
+          >
+            <RotateCcw size={20} />
+          </button>
+        </div>
       </div>
 
       <div className="text-center mb-8">
@@ -96,6 +120,45 @@ export default function NumberBaseball() {
           <Send size={18} /> 투구
         </button>
       </form>
+
+      <AnimatePresence>
+        {isGameOver && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="absolute inset-0 z-20 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center"
+          >
+            <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${isVictory ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+              {isVictory ? <Trophy size={40} /> : <RotateCcw size={40} />}
+            </div>
+            <h3 className="text-3xl font-display font-black mb-2">
+              {isVictory ? 'VICTORY!' : 'GAME OVER'}
+            </h3>
+            <p className="text-slate-500 mb-6">
+              {isVictory ? `${logs.length}번 만에 맞추셨습니다!` : '다음 기회에 도전해보세요.'}
+            </p>
+            
+            <div className="bg-slate-100 p-4 rounded-2xl mb-8 w-full">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">정답</p>
+              <div className="flex justify-center gap-2">
+                {target.map((num, i) => (
+                  <span key={i} className="w-10 h-12 bg-white rounded-lg flex items-center justify-center text-2xl font-mono font-bold text-kbo-blue shadow-sm border border-slate-200">
+                    {num}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={initGame}
+              className="w-full py-4 bg-kbo-blue text-white rounded-2xl font-bold text-lg shadow-lg shadow-kbo-blue/20 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
+            >
+              <RotateCcw size={20} /> 다시 시작하기
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">

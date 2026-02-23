@@ -8,8 +8,10 @@ export const TEAMS: Team[] = [
     city: '서울',
     stadium: '잠실야구장',
     color: '#C30452',
-    logo: 'https://picsum.photos/seed/lgtwins/200/200',
-    description: '서울을 연고로 하는 명문 구단으로, 강력한 팬덤과 전통을 자랑합니다.'
+    logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_LG.png',
+    description: '서울을 연고로 하는 명문 구단으로, 강력한 팬덤과 전통을 자랑합니다.',
+    foundedYear: 1990,
+    championships: '4회 (1990, 1994, 2023, 2025)'
   },
   {
     id: 'kt',
@@ -18,8 +20,10 @@ export const TEAMS: Team[] = [
     city: '수원',
     stadium: '수원 케이티 위즈 파크',
     color: '#000000',
-    logo: 'https://picsum.photos/seed/ktwiz/200/200',
-    description: '마법 같은 야구로 수원의 자부심이 된 신흥 강호입니다.'
+    logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_KT.png',
+    description: '마법 같은 야구로 수원의 자부심이 된 신흥 강호입니다.',
+    foundedYear: 2013,
+    championships: '1회 (2021)'
   },
   {
     id: 'ssg',
@@ -28,8 +32,10 @@ export const TEAMS: Team[] = [
     city: '인천',
     stadium: '인천 SSG 랜더스필드',
     color: '#CE0E2D',
-    logo: 'https://picsum.photos/seed/ssglanders/200/200',
-    description: '인천 야구의 자존심을 잇는 상륙자들, 화끈한 공격 야구를 지향합니다.'
+    logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_SK.png',
+    description: '인천 야구의 자존심을 잇는 상륙자들, 화끈한 공격 야구를 지향합니다.',
+    foundedYear: 2021,
+    championships: '5회 (2007, 2008, 2010, 2018, 2022) ※ SK 와이번스 우승 기록 포함'
   },
   {
     id: 'nc',
@@ -38,8 +44,10 @@ export const TEAMS: Team[] = [
     city: '창원',
     stadium: '창원 NC 파크',
     color: '#071D3D',
-    logo: 'https://picsum.photos/seed/ncdinos/200/200',
-    description: '공룡 군단의 거침없는 질주, 최첨단 구장을 홈으로 사용합니다.'
+    logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_NC.png',
+    description: '공룡 군단의 거침없는 질주, 최첨단 구장을 홈으로 사용합니다.',
+    foundedYear: 2011,
+    championships: '1회 (2020)'
   },
   {
     id: 'doosan',
@@ -48,8 +56,10 @@ export const TEAMS: Team[] = [
     city: '서울',
     stadium: '잠실야구장',
     color: '#131230',
-    logo: 'https://picsum.photos/seed/doosanbears/200/200',
-    description: '끈기 있는 허슬두 정신으로 무장한 가을 야구의 단골 손님입니다.'
+    logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_OB.png',
+    description: '끈기 있는 허슬두 정신으로 무장한 가을 야구의 단골 손님입니다.',
+    foundedYear: 1982,
+    championships: '6회 (1982, 1995, 2001, 2015, 2016, 2019) ※ OB 베어스 우승 기록 포함'
   },
   {
     id: 'kia',
@@ -58,8 +68,10 @@ export const TEAMS: Team[] = [
     city: '광주',
     stadium: '광주-기아 챔피언스 필드',
     color: '#EA0029',
-    logo: 'https://picsum.photos/seed/kiatigers/200/200',
-    description: 'KBO 리그 최다 우승에 빛나는 전통의 명가, 호랑이 군단입니다.'
+    logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_HT.png',
+    description: 'KBO 리그 최다 우승에 빛나는 전통의 명가, 호랑이 군단입니다.',
+    foundedYear: 2001,
+    championships: '12회 (1983, 1986~1989, 1991, 1993, 1996, 1997, 2009, 2017, 2024) ※ 해태 타이거즈 우승 기록 포함'
   },
   {
     id: 'lotte',
@@ -68,8 +80,10 @@ export const TEAMS: Team[] = [
     city: '부산',
     stadium: '사직야구장',
     color: '#002955',
-    logo: 'https://picsum.photos/seed/lottegiants/200/200',
-    description: '구도 부산의 열정을 상징하는 거인들, 가장 뜨거운 응원 문화를 가졌습니다.'
+    logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_LT.png',
+    description: '구도 부산의 열정을 상징하는 거인들, 가장 뜨거운 응원 문화를 가졌습니다.',
+    foundedYear: 1982,
+    championships: '2회 (1984, 1992)'
   },
   {
     id: 'samsung',
@@ -78,8 +92,10 @@ export const TEAMS: Team[] = [
     city: '대구',
     stadium: '대구 삼성 라이온즈 파크',
     color: '#074CA1',
-    logo: 'https://picsum.photos/seed/samsunglions/200/200',
-    description: '푸른 사자들의 명가 재건, 대구의 자부심을 지키는 구단입니다.'
+    logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_SS.png',
+    description: '푸른 사자들의 명가 재건, 대구의 자부심을 지키는 구단입니다.',
+    foundedYear: 1982,
+    championships: '8회 (1985, 2002, 2005, 2006, 2011~2014)'
   },
   {
     id: 'hanwha',
@@ -88,8 +104,10 @@ export const TEAMS: Team[] = [
     city: '대전',
     stadium: '한화생명 이글스 파크',
     color: '#FF6600',
-    logo: 'https://picsum.photos/seed/hanwhaeagles/200/200',
-    description: '불꽃 투혼으로 승리를 향해 비상하는 독수리 군단입니다.'
+    logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_HH.png',
+    description: '불꽃 투혼으로 승리를 향해 비상하는 독수리 군단입니다.',
+    foundedYear: 1986,
+    championships: '1회 (1999)'
   },
   {
     id: 'kiwoom',
@@ -98,8 +116,10 @@ export const TEAMS: Team[] = [
     city: '서울',
     stadium: '고척 스카이돔',
     color: '#820024',
-    logo: 'https://picsum.photos/seed/kiwoomheroes/200/200',
-    description: '젊은 패기와 육성 시스템으로 승부하는 고척돔의 영웅들입니다.'
+    logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_WO.png',
+    description: '젊은 패기와 육성 시스템으로 승부하는 고척돔의 영웅들입니다.',
+    foundedYear: 2008,
+    championships: '-'
   }
 ];
 
