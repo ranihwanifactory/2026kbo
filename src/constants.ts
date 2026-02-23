@@ -281,6 +281,12 @@ export const TICKET_LINKS: TicketLink[] = [
   }
 ];
 
+export const GALLERY_CATEGORIES = [
+  ...TEAMS.map(t => ({ id: t.id, name: t.name.split(' ')[0] })),
+  { id: 'highlights', name: '야구명장면' },
+  { id: 'etc', name: '기타' }
+];
+
 export const NOTICE = {
   title: "2026 KBO 시범경기 일정 발표",
   date: "2026. 2. 4. (수)",

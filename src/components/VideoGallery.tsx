@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Youtube, Plus, MessageSquare, User, LogOut, LogIn, Send, Trash2, Filter, Edit2, X, Check } from 'lucide-react';
 import { auth, db, googleProvider, signInWithPopup, signOut, onAuthStateChanged, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, deleteDoc, User as FirebaseUser } from '../services/firebase';
 import { VideoPost, Comment } from '../types';
-import { TEAMS } from '../constants';
+import { TEAMS, GALLERY_CATEGORIES } from '../constants';
 
 export default function VideoGallery() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -235,15 +235,15 @@ export default function VideoGallery() {
         >
           전체
         </button>
-        {TEAMS.map(team => (
+        {GALLERY_CATEGORIES.map(cat => (
           <button
-            key={team.id}
-            onClick={() => setSelectedTeam(team.id)}
+            key={cat.id}
+            onClick={() => setSelectedTeam(cat.id)}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
-              selectedTeam === team.id ? 'bg-kbo-blue text-white' : 'bg-white text-slate-500 border border-slate-200'
+              selectedTeam === cat.id ? 'bg-kbo-blue text-white' : 'bg-white text-slate-500 border border-slate-200'
             }`}
           >
-            {team.name.split(' ')[0]}
+            {cat.name}
           </button>
         ))}
       </div>
@@ -284,14 +284,14 @@ export default function VideoGallery() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400 uppercase">구단 카테고리</label>
+                  <label className="text-xs font-bold text-slate-400 uppercase">카테고리</label>
                   <select
                     value={newVideo.teamId}
                     onChange={e => setNewVideo({ ...newVideo, teamId: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-kbo-blue/20 outline-none bg-white"
                   >
-                    {TEAMS.map(team => (
-                      <option key={team.id} value={team.id}>{team.name}</option>
+                    {GALLERY_CATEGORIES.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
                   </select>
                 </div>
@@ -332,7 +332,7 @@ export default function VideoGallery() {
               )}
               <div className="absolute top-4 left-4 flex gap-2">
                 <span className="px-3 py-1 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold rounded-full uppercase tracking-widest">
-                  {TEAMS.find(t => t.id === post.teamId)?.name.split(' ')[0]}
+                  {GALLERY_CATEGORIES.find(c => c.id === post.teamId)?.name}
                 </span>
               </div>
               
@@ -378,14 +378,14 @@ export default function VideoGallery() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase">구단</label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase">카테고리</label>
                     <select
                       value={editForm.teamId}
                       onChange={e => setEditForm({ ...editForm, teamId: e.target.value })}
                       className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 outline-none bg-white"
                     >
-                      {TEAMS.map(team => (
-                        <option key={team.id} value={team.id}>{team.name}</option>
+                      {GALLERY_CATEGORIES.map(cat => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
                       ))}
                     </select>
                   </div>
