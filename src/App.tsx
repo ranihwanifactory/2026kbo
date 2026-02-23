@@ -8,8 +8,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Bell, Calendar, Users, Ticket, Gamepad2, ChevronRight, ExternalLink, MapPin, Clock, Info } from 'lucide-react';
 import { TEAMS, SCHEDULE, TICKET_LINKS, NOTICE } from './constants';
 import NumberBaseball from './components/NumberBaseball';
+import VideoGallery from './components/VideoGallery';
 
-type Section = 'notice' | 'schedule' | 'teams' | 'tickets' | 'game';
+type Section = 'notice' | 'schedule' | 'teams' | 'tickets' | 'gallery' | 'game';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState<Section>('notice');
@@ -20,6 +21,7 @@ export default function App() {
     { id: 'schedule', label: '시범경기 일정', icon: Calendar },
     { id: 'teams', label: '구단 소개', icon: Users },
     { id: 'tickets', label: '티켓 & 링크', icon: Ticket },
+    { id: 'gallery', label: 'KBO 갤러리', icon: Users },
     { id: 'game', label: '숫자 야구 게임', icon: Gamepad2 },
   ];
 
@@ -318,6 +320,12 @@ export default function App() {
                   </div>
                   <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
                 </div>
+              </section>
+            )}
+
+            {activeSection === 'gallery' && (
+              <section className="space-y-8">
+                <VideoGallery />
               </section>
             )}
 

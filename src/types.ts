@@ -28,3 +28,25 @@ export interface TicketLink {
   url: string;
   description: string;
 }
+
+export interface Comment {
+  id: string;
+  userId: string;
+  userName: string;
+  userPhoto: string;
+  text: string;
+  createdAt: any;
+}
+
+export interface VideoPost {
+  id: string;
+  title: string;
+  youtubeUrl: string;
+  videoId: string;
+  teamId: string;
+  userId: string;
+  userName: string;
+  userPhoto: string;
+  createdAt: any;
+  comments: Comment[];
+}
