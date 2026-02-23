@@ -40,10 +40,10 @@ export default function App() {
       <nav className="w-full md:w-72 kbo-gradient text-white p-6 flex flex-col shrink-0">
         <div className="mb-12">
           <h1 className="text-3xl font-display font-black tracking-tighter leading-none mb-2">
-            KBO 2026
+            2026 KBO
           </h1>
           <p className="text-white/60 text-xs font-medium uppercase tracking-widest">
-            Baseball Hub
+            시범경기 안내
           </p>
         </div>
 
