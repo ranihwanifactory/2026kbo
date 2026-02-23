@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Youtube, Plus, MessageSquare, User, LogOut, LogIn, Send, Trash2, Filter } from 'lucide-react';
-import { auth, db, googleProvider, signInWithPopup, signOut, onAuthStateChanged, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, User as FirebaseUser } from '../services/firebase';
+import { Youtube, Plus, MessageSquare, User, LogOut, LogIn, Send, Trash2, Filter, Edit2, X, Check } from 'lucide-react';
+import { auth, db, googleProvider, signInWithPopup, signOut, onAuthStateChanged, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, arrayUnion, deleteDoc, User as FirebaseUser } from '../services/firebase';
 import { VideoPost, Comment } from '../types';
 import { TEAMS } from '../constants';
 
@@ -12,6 +12,8 @@ export default function VideoGallery() {
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
   const [newVideo, setNewVideo] = useState({ title: '', url: '', teamId: 'lg' });
   const [commentTexts, setCommentTexts] = useState<{ [key: string]: string }>({});
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ title: '', url: '', teamId: '' });
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
@@ -98,6 +100,50 @@ export default function VideoGallery() {
       setCommentTexts({ ...commentTexts, [postId]: '' });
     } catch (error) {
       console.error("Error adding comment:", error);
+    }
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    if (!window.confirm("정말로 이 게시물을 삭제하시겠습니까?")) return;
+    try {
+      await deleteDoc(doc(db, "posts", postId));
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      alert("삭제 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleStartEdit = (post: VideoPost) => {
+    setEditingPostId(post.id);
+    setEditForm({
+      title: post.title,
+      url: post.youtubeUrl,
+      teamId: post.teamId
+    });
+  };
+
+  const handleUpdatePost = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPostId) return;
+
+    const videoId = getYoutubeId(editForm.url);
+    if (!videoId) {
+      alert("유효한 유튜브 URL을 입력해주세요.");
+      return;
+    }
+
+    try {
+      const postRef = doc(db, "posts", editingPostId);
+      await updateDoc(postRef, {
+        title: editForm.title,
+        youtubeUrl: editForm.url,
+        videoId: videoId,
+        teamId: editForm.teamId
+      });
+      setEditingPostId(null);
+    } catch (error) {
+      console.error("Error updating post:", error);
+      alert("수정 중 오류가 발생했습니다.");
     }
   };
 
@@ -224,70 +270,150 @@ export default function VideoGallery() {
             className="glass-card rounded-3xl overflow-hidden flex flex-col"
           >
             <div className="aspect-video relative group">
-              <iframe
-                src={`https://www.youtube.com/embed/${post.videoId}`}
-                title={post.title}
-                className="w-full h-full"
-                allowFullScreen
-              />
-              <div className="absolute top-4 left-4">
+              {editingPostId === post.id ? (
+                <div className="w-full h-full bg-slate-100 flex items-center justify-center p-4">
+                  <div className="text-center">
+                    <Youtube size={32} className="mx-auto text-red-600 mb-2" />
+                    <p className="text-xs font-bold text-slate-500">수정 모드</p>
+                  </div>
+                </div>
+              ) : (
+                <iframe
+                  src={`https://www.youtube.com/embed/${post.videoId}`}
+                  title={post.title}
+                  className="w-full h-full"
+                  allowFullScreen
+                />
+              )}
+              <div className="absolute top-4 left-4 flex gap-2">
                 <span className="px-3 py-1 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold rounded-full uppercase tracking-widest">
                   {TEAMS.find(t => t.id === post.teamId)?.name.split(' ')[0]}
                 </span>
               </div>
+              
+              {user && user.uid === post.userId && editingPostId !== post.id && (
+                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button 
+                    onClick={() => handleStartEdit(post)}
+                    className="p-2 bg-white/90 backdrop-blur-sm text-slate-700 rounded-full shadow-lg hover:bg-white transition-colors"
+                  >
+                    <Edit2 size={14} />
+                  </button>
+                  <button 
+                    onClick={() => handleDeletePost(post.id)}
+                    className="p-2 bg-red-500/90 backdrop-blur-sm text-white rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="p-6 flex-1 flex flex-col">
-              <div className="flex items-center gap-3 mb-4">
-                <img src={post.userPhoto} alt={post.userName} className="w-8 h-8 rounded-full border border-slate-100" />
-                <div>
-                  <p className="text-xs font-bold text-slate-900">{post.userName}</p>
-                  <p className="text-[10px] text-slate-400">
-                    {post.createdAt?.toDate ? post.createdAt.toDate().toLocaleDateString() : "방금 전"}
-                  </p>
-                </div>
-              </div>
-              
-              <h4 className="text-lg font-bold text-slate-900 mb-6 line-clamp-2">{post.title}</h4>
-
-              <div className="mt-auto space-y-4 pt-6 border-t border-slate-100">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase mb-2">
-                  <MessageSquare size={14} /> 댓글 {post.comments?.length || 0}
-                </div>
-                
-                <div className="max-h-40 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
-                  {post.comments?.map(comment => (
-                    <div key={comment.id} className="flex gap-3">
-                      <img src={comment.userPhoto} alt={comment.userName} className="w-6 h-6 rounded-full shrink-0" />
-                      <div className="bg-slate-50 p-3 rounded-2xl flex-1">
-                        <p className="text-[10px] font-bold text-slate-900 mb-1">{comment.userName}</p>
-                        <p className="text-xs text-slate-600 leading-relaxed">{comment.text}</p>
-                      </div>
-                    </div>
-                  ))}
-                  {(!post.comments || post.comments.length === 0) && (
-                    <p className="text-center text-xs text-slate-400 py-4 italic">첫 번째 댓글을 남겨보세요.</p>
-                  )}
-                </div>
-
-                {user && (
-                  <div className="flex gap-2 pt-2">
+              {editingPostId === post.id ? (
+                <form onSubmit={handleUpdatePost} className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase">제목</label>
                     <input
+                      required
                       type="text"
-                      value={commentTexts[post.id] || ''}
-                      onChange={e => setCommentTexts({ ...commentTexts, [post.id]: e.target.value })}
-                      placeholder="댓글을 입력하세요..."
-                      className="flex-1 px-4 py-2 bg-slate-50 rounded-xl text-xs border border-transparent focus:border-kbo-blue/20 focus:bg-white outline-none transition-all"
+                      value={editForm.title}
+                      onChange={e => setEditForm({ ...editForm, title: e.target.value })}
+                      className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-kbo-blue/20"
                     />
-                    <button
-                      onClick={() => handleAddComment(post.id)}
-                      className="p-2 bg-kbo-blue text-white rounded-xl hover:scale-105 transition-transform"
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase">URL</label>
+                    <input
+                      required
+                      type="url"
+                      value={editForm.url}
+                      onChange={e => setEditForm({ ...editForm, url: e.target.value })}
+                      className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-kbo-blue/20"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase">구단</label>
+                    <select
+                      value={editForm.teamId}
+                      onChange={e => setEditForm({ ...editForm, teamId: e.target.value })}
+                      className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 outline-none bg-white"
                     >
-                      <Send size={14} />
+                      {TEAMS.map(team => (
+                        <option key={team.id} value={team.id}>{team.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <button 
+                      type="button" 
+                      onClick={() => setEditingPostId(null)}
+                      className="flex-1 py-2 text-xs font-bold text-slate-500 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+                    >
+                      취소
+                    </button>
+                    <button 
+                      type="submit"
+                      className="flex-1 py-2 text-xs font-bold text-white bg-kbo-blue rounded-lg hover:bg-kbo-blue/90 transition-colors flex items-center justify-center gap-1"
+                    >
+                      <Check size={12} /> 저장
                     </button>
                   </div>
-                )}
-              </div>
+                </form>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3 mb-4">
+                    <img src={post.userPhoto} alt={post.userName} className="w-8 h-8 rounded-full border border-slate-100" />
+                    <div>
+                      <p className="text-xs font-bold text-slate-900">{post.userName}</p>
+                      <p className="text-[10px] text-slate-400">
+                        {post.createdAt?.toDate ? post.createdAt.toDate().toLocaleDateString() : "방금 전"}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <h4 className="text-lg font-bold text-slate-900 mb-6 line-clamp-2">{post.title}</h4>
+
+                  <div className="mt-auto space-y-4 pt-6 border-t border-slate-100">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase mb-2">
+                      <MessageSquare size={14} /> 댓글 {post.comments?.length || 0}
+                    </div>
+                    
+                    <div className="max-h-40 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+                      {post.comments?.map(comment => (
+                        <div key={comment.id} className="flex gap-3">
+                          <img src={comment.userPhoto} alt={comment.userName} className="w-6 h-6 rounded-full shrink-0" />
+                          <div className="bg-slate-50 p-3 rounded-2xl flex-1">
+                            <p className="text-[10px] font-bold text-slate-900 mb-1">{comment.userName}</p>
+                            <p className="text-xs text-slate-600 leading-relaxed">{comment.text}</p>
+                          </div>
+                        </div>
+                      ))}
+                      {(!post.comments || post.comments.length === 0) && (
+                        <p className="text-center text-xs text-slate-400 py-4 italic">첫 번째 댓글을 남겨보세요.</p>
+                      )}
+                    </div>
+
+                    {user && (
+                      <div className="flex gap-2 pt-2">
+                        <input
+                          type="text"
+                          value={commentTexts[post.id] || ''}
+                          onChange={e => setCommentTexts({ ...commentTexts, [post.id]: e.target.value })}
+                          placeholder="댓글을 입력하세요..."
+                          className="flex-1 px-4 py-2 bg-slate-50 rounded-xl text-xs border border-transparent focus:border-kbo-blue/20 focus:bg-white outline-none transition-all"
+                        />
+                        <button
+                          onClick={() => handleAddComment(post.id)}
+                          className="p-2 bg-kbo-blue text-white rounded-xl hover:scale-105 transition-transform"
+                        >
+                          <Send size={14} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </motion.div>
         ))}
