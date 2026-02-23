@@ -9,6 +9,7 @@ export interface Team {
   description: string;
   foundedYear: number;
   championships: string;
+  website: string;
 }
 
 export interface GameSchedule {

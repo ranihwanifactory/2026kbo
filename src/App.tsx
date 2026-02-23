@@ -261,6 +261,14 @@ export default function App() {
                           <p className="text-[10px] font-bold text-kbo-blue uppercase tracking-widest mb-1">우승 횟수(연도)</p>
                           <p className="text-sm font-bold text-slate-700">{team.championships}</p>
                         </div>
+                        <a 
+                          href={team.website} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="mt-4 flex items-center justify-center gap-2 w-full py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                        >
+                          <ExternalLink size={16} /> 공식 홈페이지 방문
+                        </a>
                       </div>
                     </div>
                   ))}

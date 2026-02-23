@@ -11,7 +11,8 @@ export const TEAMS: Team[] = [
     logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_LG.png',
     description: '서울을 연고로 하는 명문 구단으로, 강력한 팬덤과 전통을 자랑합니다.',
     foundedYear: 1990,
-    championships: '4회 (1990, 1994, 2023, 2025)'
+    championships: '4회 (1990, 1994, 2023, 2025)',
+    website: 'https://www.lgtwins.com'
   },
   {
     id: 'kt',
@@ -23,7 +24,8 @@ export const TEAMS: Team[] = [
     logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_KT.png',
     description: '마법 같은 야구로 수원의 자부심이 된 신흥 강호입니다.',
     foundedYear: 2013,
-    championships: '1회 (2021)'
+    championships: '1회 (2021)',
+    website: 'https://www.ktwiz.co.kr'
   },
   {
     id: 'ssg',
@@ -35,7 +37,8 @@ export const TEAMS: Team[] = [
     logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_SK.png',
     description: '인천 야구의 자존심을 잇는 상륙자들, 화끈한 공격 야구를 지향합니다.',
     foundedYear: 2021,
-    championships: '5회 (2007, 2008, 2010, 2018, 2022) ※ SK 와이번스 우승 기록 포함'
+    championships: '5회 (2007, 2008, 2010, 2018, 2022) ※ SK 와이번스 우승 기록 포함',
+    website: 'https://www.ssglanders.com'
   },
   {
     id: 'nc',
@@ -47,7 +50,8 @@ export const TEAMS: Team[] = [
     logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_NC.png',
     description: '공룡 군단의 거침없는 질주, 최첨단 구장을 홈으로 사용합니다.',
     foundedYear: 2011,
-    championships: '1회 (2020)'
+    championships: '1회 (2020)',
+    website: 'https://www.ncdinos.com'
   },
   {
     id: 'doosan',
@@ -59,7 +63,8 @@ export const TEAMS: Team[] = [
     logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_OB.png',
     description: '끈기 있는 허슬두 정신으로 무장한 가을 야구의 단골 손님입니다.',
     foundedYear: 1982,
-    championships: '6회 (1982, 1995, 2001, 2015, 2016, 2019) ※ OB 베어스 우승 기록 포함'
+    championships: '6회 (1982, 1995, 2001, 2015, 2016, 2019) ※ OB 베어스 우승 기록 포함',
+    website: 'https://www.doosanbears.com'
   },
   {
     id: 'kia',
@@ -71,7 +76,8 @@ export const TEAMS: Team[] = [
     logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_HT.png',
     description: 'KBO 리그 최다 우승에 빛나는 전통의 명가, 호랑이 군단입니다.',
     foundedYear: 2001,
-    championships: '12회 (1983, 1986~1989, 1991, 1993, 1996, 1997, 2009, 2017, 2024) ※ 해태 타이거즈 우승 기록 포함'
+    championships: '12회 (1983, 1986~1989, 1991, 1993, 1996, 1997, 2009, 2017, 2024) ※ 해태 타이거즈 우승 기록 포함',
+    website: 'https://www.kiatigers.co.kr'
   },
   {
     id: 'lotte',
@@ -83,7 +89,8 @@ export const TEAMS: Team[] = [
     logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_LT.png',
     description: '구도 부산의 열정을 상징하는 거인들, 가장 뜨거운 응원 문화를 가졌습니다.',
     foundedYear: 1982,
-    championships: '2회 (1984, 1992)'
+    championships: '2회 (1984, 1992)',
+    website: 'https://www.giantsclub.com'
   },
   {
     id: 'samsung',
@@ -95,7 +102,8 @@ export const TEAMS: Team[] = [
     logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_SS.png',
     description: '푸른 사자들의 명가 재건, 대구의 자부심을 지키는 구단입니다.',
     foundedYear: 1982,
-    championships: '8회 (1985, 2002, 2005, 2006, 2011~2014)'
+    championships: '8회 (1985, 2002, 2005, 2006, 2011~2014)',
+    website: 'https://www.samsunglions.com'
   },
   {
     id: 'hanwha',
@@ -107,7 +115,8 @@ export const TEAMS: Team[] = [
     logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_HH.png',
     description: '불꽃 투혼으로 승리를 향해 비상하는 독수리 군단입니다.',
     foundedYear: 1986,
-    championships: '1회 (1999)'
+    championships: '1회 (1999)',
+    website: 'https://www.hanwhaeagles.co.kr'
   },
   {
     id: 'kiwoom',
@@ -119,7 +128,8 @@ export const TEAMS: Team[] = [
     logo: 'https://6ptotvmi5753.edge.naverncp.com/KBO_IMAGE/emblem/regular/fixed/emblem_WO.png',
     description: '젊은 패기와 육성 시스템으로 승부하는 고척돔의 영웅들입니다.',
     foundedYear: 2008,
-    championships: '-'
+    championships: '-',
+    website: 'https://www.heroesbaseball.co.kr'
   }
 ];
 
