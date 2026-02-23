@@ -10,7 +10,13 @@ export default function NumberBaseball() {
   const [isVictory, setIsVictory] = useState(false);
   const [message, setMessage] = useState('4자리 숫자를 맞춰보세요!');
 
-  const MAX_ATTEMPTS = 10;
+  const MAX_ATTEMPTS = 30;
+
+  const getGrade = (attempts: number) => {
+    if (attempts <= 10) return "한국시리즈 급";
+    if (attempts <= 20) return "가을야구 급";
+    return "정규시즌 급";
+  };
 
   useEffect(() => {
     initGame();
@@ -135,6 +141,17 @@ export default function NumberBaseball() {
             <h3 className="text-3xl font-display font-black mb-2">
               {isVictory ? 'VICTORY!' : 'GAME OVER'}
             </h3>
+            {isVictory && (
+              <div className="mb-4">
+                <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${
+                  logs.length <= 10 ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
+                  logs.length <= 20 ? 'bg-orange-100 text-orange-700 border border-orange-200' :
+                  'bg-blue-100 text-blue-700 border border-blue-200'
+                }`}>
+                  등급: {getGrade(logs.length)}
+                </span>
+              </div>
+            )}
             <p className="text-slate-500 mb-6">
               {isVictory ? `${logs.length}번 만에 맞추셨습니다!` : '다음 기회에 도전해보세요.'}
             </p>
