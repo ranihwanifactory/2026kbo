@@ -14,6 +14,8 @@ export default function VideoGallery() {
   const [commentTexts, setCommentTexts] = useState<{ [key: string]: string }>({});
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ title: '', url: '', teamId: '' });
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editCommentText, setEditCommentText] = useState('');
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
@@ -100,6 +102,49 @@ export default function VideoGallery() {
       setCommentTexts({ ...commentTexts, [postId]: '' });
     } catch (error) {
       console.error("Error adding comment:", error);
+    }
+  };
+
+  const handleDeleteComment = async (postId: string, commentId: string) => {
+    if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
+    const postRef = doc(db, "posts", postId);
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+
+    const updatedComments = post.comments.filter(c => c.id !== commentId);
+
+    try {
+      await updateDoc(postRef, {
+        comments: updatedComments
+      });
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
+  const handleStartEditComment = (comment: Comment) => {
+    setEditingCommentId(comment.id);
+    setEditCommentText(comment.text);
+  };
+
+  const handleUpdateComment = async (postId: string, commentId: string) => {
+    if (!editCommentText.trim()) return;
+    const postRef = doc(db, "posts", postId);
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+
+    const updatedComments = post.comments.map(c => 
+      c.id === commentId ? { ...c, text: editCommentText } : c
+    );
+
+    try {
+      await updateDoc(postRef, {
+        comments: updatedComments
+      });
+      setEditingCommentId(null);
+      setEditCommentText('');
+    } catch (error) {
+      console.error("Error updating comment:", error);
     }
   };
 
@@ -381,11 +426,40 @@ export default function VideoGallery() {
                     
                     <div className="max-h-40 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                       {post.comments?.map(comment => (
-                        <div key={comment.id} className="flex gap-3">
+                        <div key={comment.id} className="flex gap-3 group/comment">
                           <img src={comment.userPhoto} alt={comment.userName} className="w-6 h-6 rounded-full shrink-0" />
-                          <div className="bg-slate-50 p-3 rounded-2xl flex-1">
-                            <p className="text-[10px] font-bold text-slate-900 mb-1">{comment.userName}</p>
-                            <p className="text-xs text-slate-600 leading-relaxed">{comment.text}</p>
+                          <div className="bg-slate-50 p-3 rounded-2xl flex-1 relative">
+                            <div className="flex justify-between items-start mb-1">
+                              <p className="text-[10px] font-bold text-slate-900">{comment.userName}</p>
+                              {user && user.uid === comment.userId && editingCommentId !== comment.id && (
+                                <div className="flex gap-1 opacity-0 group-hover/comment:opacity-100 transition-opacity">
+                                  <button onClick={() => handleStartEditComment(comment)} className="text-slate-400 hover:text-kbo-blue">
+                                    <Edit2 size={10} />
+                                  </button>
+                                  <button onClick={() => handleDeleteComment(post.id, comment.id)} className="text-slate-400 hover:text-red-500">
+                                    <Trash2 size={10} />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {editingCommentId === comment.id ? (
+                              <div className="space-y-2">
+                                <input
+                                  autoFocus
+                                  type="text"
+                                  value={editCommentText}
+                                  onChange={e => setEditCommentText(e.target.value)}
+                                  className="w-full px-2 py-1 text-xs bg-white rounded border border-slate-200 outline-none"
+                                />
+                                <div className="flex justify-end gap-2">
+                                  <button onClick={() => setEditingCommentId(null)} className="text-[10px] font-bold text-slate-400">취소</button>
+                                  <button onClick={() => handleUpdateComment(post.id, comment.id)} className="text-[10px] font-bold text-kbo-blue">저장</button>
+                                </div>
+                              </div>
+                            ) : (
+                              <p className="text-xs text-slate-600 leading-relaxed">{comment.text}</p>
+                            )}
                           </div>
                         </div>
                       ))}
