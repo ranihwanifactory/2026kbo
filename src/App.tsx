@@ -16,6 +16,11 @@ export default function App() {
   const [activeSection, setActiveSection] = useState<Section>('notice');
   const [filterTeam, setFilterTeam] = useState<string>('전체');
 
+  const getTeamLogo = (shortName: string) => {
+    const team = TEAMS.find(t => t.name.startsWith(shortName));
+    return team ? team.logo : '';
+  };
+
   const navItems = [
     { id: 'notice', label: '공지 및 안내', icon: Bell },
     { id: 'schedule', label: '시범경기 일정', icon: Calendar },
@@ -191,14 +196,20 @@ export default function App() {
                         {day.games.map((game, gIdx) => (
                           <div key={gIdx} className="flex flex-col sm:flex-row items-center justify-between p-4 hover:bg-slate-50 transition-colors rounded-2xl group">
                             <div className="flex items-center gap-8 flex-1 justify-center sm:justify-start">
-                              <div className="text-center sm:text-right min-w-[80px]">
-                                <p className="text-xs font-bold text-slate-400 mb-1">AWAY</p>
-                                <p className={`text-xl font-display font-bold ${game.away === filterTeam ? 'text-kbo-blue' : ''}`}>{game.away}</p>
+                              <div className="flex flex-col items-center sm:items-end min-w-[100px]">
+                                <p className="text-xs font-bold text-slate-400 mb-2">AWAY</p>
+                                <div className="flex items-center gap-2">
+                                  <img src={getTeamLogo(game.away)} alt="" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
+                                  <p className={`text-xl font-display font-bold ${game.away === filterTeam ? 'text-kbo-blue' : ''}`}>{game.away}</p>
+                                </div>
                               </div>
                               <div className="text-slate-200 font-display font-black text-2xl">VS</div>
-                              <div className="text-center sm:text-left min-w-[80px]">
-                                <p className="text-xs font-bold text-slate-400 mb-1">HOME</p>
-                                <p className={`text-xl font-display font-bold ${game.home === filterTeam ? 'text-kbo-blue' : ''}`}>{game.home}</p>
+                              <div className="flex flex-col items-center sm:items-start min-w-[100px]">
+                                <p className="text-xs font-bold text-slate-400 mb-2">HOME</p>
+                                <div className="flex items-center gap-2">
+                                  <img src={getTeamLogo(game.home)} alt="" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
+                                  <p className={`text-xl font-display font-bold ${game.home === filterTeam ? 'text-kbo-blue' : ''}`}>{game.home}</p>
+                                </div>
                               </div>
                             </div>
                             <div className="flex items-center gap-6 mt-4 sm:mt-0">
