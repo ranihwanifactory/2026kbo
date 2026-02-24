@@ -1,2 +1,4 @@
 User-agent: *
-Allow:/
+Allow: /
+
+Sitemap: https://kbo2026.hub/sitemap.xml
