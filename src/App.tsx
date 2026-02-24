@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, Calendar, Users, Ticket, Gamepad2, ChevronRight, ExternalLink, MapPin, Clock, Info } from 'lucide-react';
+import { Bell, Calendar, Users, Ticket, Gamepad2, ChevronRight, ExternalLink, MapPin, Clock, Info, Share2, Globe } from 'lucide-react';
 import { TEAMS, SCHEDULE, TICKET_LINKS, NOTICE } from './constants';
 import NumberBaseball from './components/NumberBaseball';
 import VideoGallery from './components/VideoGallery';
@@ -19,6 +19,24 @@ export default function App() {
   const getTeamLogo = (shortName: string) => {
     const team = TEAMS.find(t => t.name.startsWith(shortName));
     return team ? team.logo : '';
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: '2026 KBO 시범경기 안내',
+          text: '2026 KBO 시범경기 일정과 구단 정보를 확인해보세요!',
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      // Fallback: Copy to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      alert('링크가 클립보드에 복사되었습니다.');
+    }
   };
 
   const navItems = [
@@ -40,9 +58,9 @@ export default function App() {
   })).filter(day => filterTeam === '전체' || day.games.length > 0);
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Sidebar Navigation */}
-      <nav className="w-full md:w-72 kbo-gradient text-white p-6 flex flex-col shrink-0">
+    <div className="min-h-screen flex flex-col md:flex-row bg-[#f8f9fa]">
+      {/* Desktop Sidebar Navigation */}
+      <nav className="hidden md:flex w-72 kbo-gradient text-white p-6 flex-col shrink-0 sticky top-0 h-screen">
         <div className="mb-12">
           <h1 className="text-3xl font-display font-black tracking-tighter leading-none mb-2">
             2026 KBO
@@ -74,7 +92,25 @@ export default function App() {
           ))}
         </div>
 
-        <div className="mt-auto pt-8 border-t border-white/10">
+        <div className="mt-auto pt-8 border-t border-white/10 space-y-4">
+          <button 
+            onClick={handleShare}
+            className="flex items-center gap-3 w-full p-4 glass-card rounded-2xl bg-white/5 border-white/5 hover:bg-white/10 transition-colors"
+          >
+            <Share2 size={20} className="text-white/60" />
+            <span className="text-sm font-bold">앱 공유하기</span>
+          </button>
+          
+          <a 
+            href="https://ranihwanibaby.tistory.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 w-full p-4 glass-card rounded-2xl bg-white/5 border-white/5 hover:bg-white/10 transition-colors"
+          >
+            <Globe size={20} className="text-white/60" />
+            <span className="text-sm font-bold">공식 블로그</span>
+          </a>
+
           <div className="flex items-center gap-3 p-4 glass-card rounded-2xl bg-white/5 border-white/5">
             <div className="w-10 h-10 rounded-full bg-emerald-400 flex items-center justify-center text-kbo-blue font-bold">
               26
@@ -87,8 +123,53 @@ export default function App() {
         </div>
       </nav>
 
+      {/* Mobile Top Header */}
+      <header className="md:hidden kbo-gradient text-white p-4 sticky top-0 z-50 flex items-center justify-between shadow-lg">
+        <div>
+          <h1 className="text-xl font-display font-black tracking-tighter leading-none">2026 KBO</h1>
+          <p className="text-white/60 text-[10px] font-medium uppercase tracking-widest">시범경기 안내</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <a 
+            href="https://ranihwanibaby.tistory.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 bg-white/10 rounded-full"
+          >
+            <Globe size={18} />
+          </a>
+          <button onClick={handleShare} className="p-2 bg-white/10 rounded-full">
+            <Share2 size={18} />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-2 flex justify-around items-center z-50 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+        {navItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActiveSection(item.id as Section)}
+            className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all duration-300 ${
+              activeSection === item.id 
+                ? 'text-kbo-blue' 
+                : 'text-slate-400'
+            }`}
+          >
+            <item.icon size={20} className={activeSection === item.id ? 'scale-110' : ''} />
+            <span className="text-[10px] font-bold tracking-tight">{item.label.split(' ')[0]}</span>
+            {activeSection === item.id && (
+              <motion.div 
+                layoutId="mobile-active-dot" 
+                className="w-1 h-1 bg-kbo-blue rounded-full absolute -bottom-1"
+              />
+            )}
+          </button>
+        ))}
+      </nav>
+
       {/* Main Content Area */}
-      <main className="flex-1 p-6 md:p-12 overflow-y-auto bg-[#f8f9fa]">
+      <main className="flex-1 p-4 md:p-12 overflow-y-auto pb-24 md:pb-12">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSection}
@@ -158,12 +239,12 @@ export default function App() {
                     <p className="text-slate-500 font-medium">2026년 3월 12일 ~ 3월 24일 주요 경기 일정</p>
                   </div>
                   
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap gap-2 no-scrollbar">
                     {filterTeams.map((team) => (
                       <button
                         key={team}
                         onClick={() => setFilterTeam(team)}
-                        className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                        className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
                           filterTeam === team 
                             ? 'bg-kbo-blue text-white shadow-md' 
                             : 'bg-white text-slate-500 hover:bg-slate-100 border border-slate-200'
