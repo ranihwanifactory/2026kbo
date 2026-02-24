@@ -85,43 +85,45 @@ export default function NumberBaseball() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 glass-card rounded-3xl relative overflow-hidden">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-display font-bold flex items-center gap-2">
-          <Trophy className="text-yellow-500" /> 숫자 야구
+    <div className="w-full max-w-md mx-auto p-4 md:p-6 glass-card rounded-3xl relative overflow-hidden">
+      <div className="flex items-center justify-between mb-6 md:mb-8">
+        <h2 className="text-xl md:text-2xl font-display font-bold flex items-center gap-2">
+          <Trophy className="text-yellow-500" size={20} /> 숫자 야구
         </h2>
-        <div className="flex items-center gap-4">
-          <span className="text-xs font-bold text-slate-400">
+        <div className="flex items-center gap-3 md:gap-4">
+          <span className="text-[10px] md:text-xs font-bold text-slate-400">
             기회: {MAX_ATTEMPTS - logs.length} / {MAX_ATTEMPTS}
           </span>
           <button
             onClick={initGame}
-            className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+            className="p-1.5 md:p-2 hover:bg-slate-100 rounded-full transition-colors"
             title="다시 시작"
           >
-            <RotateCcw size={20} />
+            <RotateCcw size={18} />
           </button>
         </div>
       </div>
 
-      <div className="text-center mb-8">
-        <p className="text-slate-600 font-medium">{message}</p>
+      <div className="text-center mb-6 md:mb-8">
+        <p className="text-sm md:text-base text-slate-600 font-medium">{message}</p>
       </div>
 
-      <form onSubmit={handleGuess} className="flex gap-2 mb-8">
+      <form onSubmit={handleGuess} className="flex flex-col sm:flex-row gap-2 mb-6 md:mb-8">
         <input
           type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           maxLength={4}
           value={guess}
-          onChange={(e) => setGuess(e.target.value)}
+          onChange={(e) => setGuess(e.target.value.replace(/[^0-9]/g, ''))}
           disabled={isGameOver}
-          placeholder="0-9 서로 다른 4자리"
-          className="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-kbo-blue/20 font-mono text-xl tracking-widest text-center"
+          placeholder="서로 다른 4자리"
+          className="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-kbo-blue/20 font-mono text-lg md:text-xl tracking-[0.5em] text-center"
         />
         <button
           type="submit"
           disabled={isGameOver}
-          className="px-6 py-3 bg-kbo-blue text-white rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+          className="w-full sm:w-auto px-6 py-3 bg-kbo-blue text-white rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <Send size={18} /> 투구
         </button>
