@@ -5,16 +5,18 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, Calendar, Users, Ticket, Gamepad2, ChevronRight, ExternalLink, MapPin, Clock, Info, Share2, Globe } from 'lucide-react';
+import { Bell, Calendar, Users, Ticket, Gamepad2, ChevronRight, ExternalLink, MapPin, Clock, Info, Share2, Globe, List, CalendarDays } from 'lucide-react';
 import { TEAMS, SCHEDULE, TICKET_LINKS, NOTICE } from './constants';
 import NumberBaseball from './components/NumberBaseball';
 import VideoGallery from './components/VideoGallery';
+import CalendarView from './components/CalendarView';
 
 type Section = 'notice' | 'schedule' | 'teams' | 'tickets' | 'gallery' | 'game';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState<Section>('notice');
   const [filterTeam, setFilterTeam] = useState<string>('전체');
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
 
   const getTeamLogo = (shortName: string) => {
     const team = TEAMS.find(t => t.name.startsWith(shortName));
@@ -234,9 +236,26 @@ export default function App() {
             {activeSection === 'schedule' && (
               <section className="space-y-8">
                 <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                  <div>
-                    <h2 className="text-4xl font-display font-black tracking-tight mb-2">시범경기 일정</h2>
-                    <p className="text-slate-500 font-medium">2026년 3월 12일 ~ 3월 24일 주요 경기 일정</p>
+                  <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
+                    <div>
+                      <h2 className="text-4xl font-display font-black tracking-tight mb-2">시범경기 일정</h2>
+                      <p className="text-slate-500 font-medium">2026년 3월 12일 ~ 3월 24일 주요 경기 일정</p>
+                    </div>
+                    
+                    <div className="flex bg-white p-1 rounded-xl border border-slate-200 w-fit">
+                      <button
+                        onClick={() => setViewMode('list')}
+                        className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-kbo-blue text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      >
+                        <List size={20} />
+                      </button>
+                      <button
+                        onClick={() => setViewMode('calendar')}
+                        className={`p-2 rounded-lg transition-all ${viewMode === 'calendar' ? 'bg-kbo-blue text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      >
+                        <CalendarDays size={20} />
+                      </button>
+                    </div>
                   </div>
                   
                   <div className="flex overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap gap-2 no-scrollbar">
@@ -256,64 +275,72 @@ export default function App() {
                   </div>
                 </header>
 
-                <div className="grid gap-6">
-                  {filteredSchedule.map((day, idx) => (
-                    <div key={idx} className="glass-card rounded-3xl overflow-hidden">
-                      <div className="bg-slate-50 px-6 py-4 border-bottom border-slate-100 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl font-display font-black text-kbo-blue">
-                            {day.date.split('-')[2]}
-                          </span>
-                          <div>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">March 2026</p>
-                            <p className="text-sm font-bold text-slate-700">{day.day}요일</p>
+                {viewMode === 'list' ? (
+                  <div className="grid gap-6">
+                    {filteredSchedule.map((day, idx) => (
+                      <div key={idx} className="glass-card rounded-3xl overflow-hidden">
+                        <div className="bg-slate-50 px-6 py-4 border-bottom border-slate-100 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl font-display font-black text-kbo-blue">
+                              {day.date.split('-')[2]}
+                            </span>
+                            <div>
+                              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">March 2026</p>
+                              <p className="text-sm font-bold text-slate-700">{day.day}요일</p>
+                            </div>
                           </div>
+                          {day.games.length === 0 && filterTeam === '전체' && (
+                            <span className="px-3 py-1 bg-slate-200 text-slate-500 rounded-full text-xs font-bold">휴식일</span>
+                          )}
                         </div>
-                        {day.games.length === 0 && filterTeam === '전체' && (
-                          <span className="px-3 py-1 bg-slate-200 text-slate-500 rounded-full text-xs font-bold">휴식일</span>
-                        )}
-                      </div>
-                      <div className="p-2">
-                        {day.games.map((game, gIdx) => (
-                          <div key={gIdx} className="flex flex-col sm:flex-row items-center justify-between p-4 hover:bg-slate-50 transition-colors rounded-2xl group">
-                            <div className="flex items-center gap-8 flex-1 justify-center sm:justify-start">
-                              <div className="flex flex-col items-center sm:items-end min-w-[100px]">
-                                <p className="text-xs font-bold text-slate-400 mb-2">AWAY</p>
-                                <div className="flex items-center gap-2">
-                                  <img src={getTeamLogo(game.away)} alt="" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
-                                  <p className={`text-xl font-display font-bold ${game.away === filterTeam ? 'text-kbo-blue' : ''}`}>{game.away}</p>
+                        <div className="p-2">
+                          {day.games.map((game, gIdx) => (
+                            <div key={gIdx} className="flex flex-col sm:flex-row items-center justify-between p-4 hover:bg-slate-50 transition-colors rounded-2xl group">
+                              <div className="flex items-center gap-8 flex-1 justify-center sm:justify-start">
+                                <div className="flex flex-col items-center sm:items-end min-w-[100px]">
+                                  <p className="text-xs font-bold text-slate-400 mb-2">AWAY</p>
+                                  <div className="flex items-center gap-2">
+                                    <img src={getTeamLogo(game.away)} alt="" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
+                                    <p className={`text-xl font-display font-bold ${game.away === filterTeam ? 'text-kbo-blue' : ''}`}>{game.away}</p>
+                                  </div>
+                                </div>
+                                <div className="text-slate-200 font-display font-black text-2xl">VS</div>
+                                <div className="flex flex-col items-center sm:items-start min-w-[100px]">
+                                  <p className="text-xs font-bold text-slate-400 mb-2">HOME</p>
+                                  <div className="flex items-center gap-2">
+                                    <img src={getTeamLogo(game.home)} alt="" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
+                                    <p className={`text-xl font-display font-bold ${game.home === filterTeam ? 'text-kbo-blue' : ''}`}>{game.home}</p>
+                                  </div>
                                 </div>
                               </div>
-                              <div className="text-slate-200 font-display font-black text-2xl">VS</div>
-                              <div className="flex flex-col items-center sm:items-start min-w-[100px]">
-                                <p className="text-xs font-bold text-slate-400 mb-2">HOME</p>
-                                <div className="flex items-center gap-2">
-                                  <img src={getTeamLogo(game.home)} alt="" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
-                                  <p className={`text-xl font-display font-bold ${game.home === filterTeam ? 'text-kbo-blue' : ''}`}>{game.home}</p>
+                              <div className="flex items-center gap-6 mt-4 sm:mt-0">
+                                <div className="flex items-center gap-2 text-slate-500">
+                                  <MapPin size={16} />
+                                  <span className="text-sm font-medium">{game.stadium}</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-slate-500">
+                                  <Clock size={16} />
+                                  <span className="text-sm font-medium">{game.time}</span>
                                 </div>
                               </div>
                             </div>
-                            <div className="flex items-center gap-6 mt-4 sm:mt-0">
-                              <div className="flex items-center gap-2 text-slate-500">
-                                <MapPin size={16} />
-                                <span className="text-sm font-medium">{game.stadium}</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-slate-500">
-                                <Clock size={16} />
-                                <span className="text-sm font-medium">{game.time}</span>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                  {filteredSchedule.length === 0 && (
-                    <div className="text-center py-20 glass-card rounded-3xl">
-                      <p className="text-slate-400 font-medium">해당 구단의 경기가 없습니다.</p>
-                    </div>
-                  )}
-                </div>
+                    ))}
+                    {filteredSchedule.length === 0 && (
+                      <div className="text-center py-20 glass-card rounded-3xl">
+                        <p className="text-slate-400 font-medium">해당 구단의 경기가 없습니다.</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <CalendarView 
+                    schedule={filteredSchedule} 
+                    getTeamLogo={getTeamLogo} 
+                    filterTeam={filterTeam} 
+                  />
+                )}
               </section>
             )}
 
