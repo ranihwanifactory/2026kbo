@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, Calendar, Users, Ticket, Gamepad2, ChevronRight, ExternalLink, MapPin, Clock, Info, Share2, Globe, List, CalendarDays } from 'lucide-react';
+import { Bell, Calendar, Users, Ticket, Gamepad2, ChevronRight, ExternalLink, MapPin, Clock, Info, Share2, Globe, List, CalendarDays, Eye } from 'lucide-react';
 import { TEAMS, SCHEDULE, TICKET_LINKS, NOTICE } from './constants';
 import NumberBaseball from './components/NumberBaseball';
 import VideoGallery from './components/VideoGallery';
@@ -17,6 +17,22 @@ export default function App() {
   const [activeSection, setActiveSection] = useState<Section>('notice');
   const [filterTeam, setFilterTeam] = useState<string>('전체');
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [visitorStats, setVisitorStats] = useState<{ today: number; total: number }>({ today: 0, total: 0 });
+
+  useEffect(() => {
+    const trackVisit = async () => {
+      try {
+        const response = await fetch('/api/visit', { method: 'POST' });
+        if (response.ok) {
+          const data = await response.json();
+          setVisitorStats(data);
+        }
+      } catch (error) {
+        console.error('Failed to track visit:', error);
+      }
+    };
+    trackVisit();
+  }, []);
 
   const getTeamLogo = (shortName: string) => {
     const team = TEAMS.find(t => t.name.startsWith(shortName));
@@ -122,14 +138,32 @@ export default function App() {
               <p className="text-sm font-bold">2026 KBO League</p>
             </div>
           </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-3 glass-card rounded-xl bg-white/5 border-white/5 text-center">
+              <p className="text-[10px] font-bold text-white/40 uppercase mb-1">Today</p>
+              <p className="text-lg font-display font-black text-emerald-400">{visitorStats.today.toLocaleString()}</p>
+            </div>
+            <div className="p-3 glass-card rounded-xl bg-white/5 border-white/5 text-center">
+              <p className="text-[10px] font-bold text-white/40 uppercase mb-1">Total</p>
+              <p className="text-lg font-display font-black text-white">{visitorStats.total.toLocaleString()}</p>
+            </div>
+          </div>
         </div>
       </nav>
 
       {/* Mobile Top Header */}
       <header className="md:hidden kbo-gradient text-white p-4 sticky top-0 z-50 flex items-center justify-between shadow-lg">
-        <div>
-          <h1 className="text-xl font-display font-black tracking-tighter leading-none">2026 KBO</h1>
-          <p className="text-white/60 text-[10px] font-medium uppercase tracking-widest">시범경기 안내</p>
+        <div className="flex items-center gap-3">
+          <div>
+            <h1 className="text-xl font-display font-black tracking-tighter leading-none">2026 KBO</h1>
+            <p className="text-white/60 text-[10px] font-medium uppercase tracking-widest">시범경기 안내</p>
+          </div>
+          <div className="h-6 w-[1px] bg-white/20 mx-1" />
+          <div className="flex flex-col">
+            <span className="text-[8px] font-bold text-white/40 uppercase">Today</span>
+            <span className="text-xs font-black text-emerald-400">{visitorStats.today.toLocaleString()}</span>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <a 
