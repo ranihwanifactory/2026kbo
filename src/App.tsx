@@ -21,11 +21,17 @@ export default function App() {
 
   useEffect(() => {
     const trackVisit = async () => {
+      console.log('Tracking visit...');
       try {
         const response = await fetch('/api/visit', { method: 'POST' });
+        console.log('Visit response status:', response.status);
         if (response.ok) {
           const data = await response.json();
+          console.log('Visit data received:', data);
           setVisitorStats(data);
+        } else {
+          const errorText = await response.text();
+          console.error('Visit tracking failed:', errorText);
         }
       } catch (error) {
         console.error('Failed to track visit:', error);

@@ -4,6 +4,8 @@ import Database from "better-sqlite3";
 import path from "path";
 import { fileURLToPath } from "url";
 
+console.log("Server starting...");
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -33,23 +35,34 @@ async function startServer() {
 
   // API to get and increment visitor count
   app.post("/api/visit", (req, res) => {
-    const today = new Date().toISOString().split('T')[0];
-    const stats: any = db.prepare("SELECT * FROM visitor_stats WHERE id = 1").get();
+    console.log("POST /api/visit received");
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const stats: any = db.prepare("SELECT * FROM visitor_stats WHERE id = 1").get();
 
-    let { total_count, today_count, last_reset_date } = stats;
+      let { total_count, today_count, last_reset_date } = stats;
 
-    if (last_reset_date !== today) {
-      today_count = 1;
-      last_reset_date = today;
-    } else {
-      today_count += 1;
+      if (last_reset_date !== today) {
+        today_count = 1;
+        last_reset_date = today;
+      } else {
+        today_count += 1;
+      }
+      total_count += 1;
+
+      db.prepare("UPDATE visitor_stats SET total_count = ?, today_count = ?, last_reset_date = ? WHERE id = 1")
+        .run(total_count, today_count, last_reset_date);
+
+      console.log(`Visit tracked: Today=${today_count}, Total=${total_count}`);
+      res.json({ today: today_count, total: total_count });
+    } catch (error) {
+      console.error("Error in /api/visit:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
-    total_count += 1;
+  });
 
-    db.prepare("UPDATE visitor_stats SET total_count = ?, today_count = ?, last_reset_date = ? WHERE id = 1")
-      .run(total_count, today_count, last_reset_date);
-
-    res.json({ today: today_count, total: total_count });
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", db: !!db });
   });
 
   app.get("/api/stats", (req, res) => {
