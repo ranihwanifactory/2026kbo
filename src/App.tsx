@@ -10,6 +10,7 @@ import { TEAMS, SCHEDULE, TICKET_LINKS, NOTICE } from './constants';
 import NumberBaseball from './components/NumberBaseball';
 import VideoGallery from './components/VideoGallery';
 import CalendarView from './components/CalendarView';
+import { db, doc, getDoc, setDoc, increment } from './services/firebase';
 
 type Section = 'notice' | 'schedule' | 'teams' | 'tickets' | 'gallery' | 'game';
 
@@ -21,28 +22,42 @@ export default function App() {
 
   useEffect(() => {
     const trackVisit = async () => {
-      console.log('Tracking visit...');
+      console.log('Tracking visit via Firebase...');
       try {
-        const response = await fetch('/api/visit', { method: 'POST' });
-        console.log('Visit response status:', response.status);
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Visit data received:', data);
-          setVisitorStats(data);
-        } else {
-          const errorText = await response.text();
-          console.error('Visit tracking failed:', errorText);
-          // Fallback to local storage mock if server fails
-          const mockToday = Math.floor(Math.random() * 10) + 1;
-          const mockTotal = 1234 + Math.floor(Math.random() * 100);
-          setVisitorStats({ today: mockToday, total: mockTotal });
+        const today = new Date().toISOString().split('T')[0];
+        const statsRef = doc(db, "stats", "visitors");
+        const dailyRef = doc(db, "daily_stats", today);
+
+        // Increment total count
+        await setDoc(statsRef, { total: increment(1) }, { merge: true });
+        
+        // Increment daily count
+        await setDoc(dailyRef, { count: increment(1) }, { merge: true });
+
+        // Get updated stats
+        const statsSnap = await getDoc(statsRef);
+        const dailySnap = await getDoc(dailyRef);
+
+        if (statsSnap.exists() && dailySnap.exists()) {
+          const statsData = {
+            today: dailySnap.data().count || 0,
+            total: statsSnap.data().total || 0
+          };
+          console.log('Visit data received from Firebase:', statsData);
+          setVisitorStats(statsData);
         }
       } catch (error) {
-        console.error('Failed to track visit:', error);
-        // Fallback to local storage mock if server fails
-        const mockToday = Math.floor(Math.random() * 10) + 1;
-        const mockTotal = 1234 + Math.floor(Math.random() * 100);
-        setVisitorStats({ today: mockToday, total: mockTotal });
+        console.error('Failed to track visit via Firebase:', error);
+        // Fallback to Express API if Firebase fails (for local testing)
+        try {
+          const response = await fetch('/api/visit', { method: 'POST' });
+          if (response.ok) {
+            const data = await response.json();
+            setVisitorStats(data);
+          }
+        } catch (apiError) {
+          console.error('API Fallback also failed:', apiError);
+        }
       }
     };
     trackVisit();

@@ -71,6 +71,7 @@ async function startServer() {
 
   // API to get and increment visitor count
   app.post("/api/visit", (req, res) => {
+    console.log(`[${new Date().toISOString()}] Incoming POST /api/visit`);
     try {
       const today = new Date().toISOString().split('T')[0];
       const stats = db.prepare("SELECT * FROM visitor_stats WHERE id = 1").get();
@@ -112,6 +113,12 @@ async function startServer() {
       console.error("Error in /api/stats:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
+  });
+
+  // Catch-all for API routes to prevent falling through to Vite
+  app.all("/api/*", (req, res) => {
+    console.log(`[${new Date().toISOString()}] 404 API Route: ${req.method} ${req.url}`);
+    res.status(404).json({ error: "API Route Not Found" });
   });
 
   // Vite middleware for development
