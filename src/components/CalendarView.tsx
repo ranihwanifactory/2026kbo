@@ -67,7 +67,7 @@ export default function CalendarView({ schedule, getTeamLogo, filterTeam }: Cale
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     key={idx} 
-                    className={`p-0.5 md:p-1 rounded-sm md:rounded-md text-[6px] md:text-[10px] font-bold flex items-center justify-center gap-0.5 border ${
+                    className={`p-0.5 md:p-1 rounded-sm md:rounded-md text-[6px] md:text-[10px] font-bold flex flex-col items-center justify-center border ${
                       game.home === filterTeam || game.away === filterTeam
                         ? 'bg-kbo-blue text-white border-kbo-blue shadow-sm'
                         : 'bg-slate-100 text-slate-600 border-slate-200'
@@ -78,6 +78,11 @@ export default function CalendarView({ schedule, getTeamLogo, filterTeam }: Cale
                       <span className="opacity-50 hidden md:inline">vs</span>
                       <span className="opacity-50 md:hidden">v</span>
                       <span>{game.home}</span>
+                    </div>
+                    <div className={`text-[5px] md:text-[8px] font-medium opacity-70 ${
+                      game.home === filterTeam || game.away === filterTeam ? 'text-white' : 'text-slate-500'
+                    }`}>
+                      {game.stadium}
                     </div>
                   </motion.div>
                 ))}
