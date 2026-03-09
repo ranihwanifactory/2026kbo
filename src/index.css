@@ -1,17 +1,9 @@
-@font-face {
-  font-family: 'KBO-Dia-Gothic';
-  src: url('https://2026kbo.vercel.app/KBO-Dia-Gothic_medium.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "KBO-Dia-Gothic", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "KBO-Dia-Gothic", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
   --color-kbo-blue: #002d56;
