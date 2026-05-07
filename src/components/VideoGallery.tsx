@@ -37,11 +37,19 @@ export default function VideoGallery() {
     };
   }, []);
 
+  const [loginError, setLoginError] = useState<string | null>(null);
+
   const handleLogin = async () => {
+    setLoginError(null);
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
+      if (error.code === 'auth/popup-blocked') {
+        setLoginError("브라우저의 팝업이 차단되었습니다. 주소창 옆의 팝업 차단 해제 설정을 확인하거나, 우측 상단의 '새 탭에서 열기' 버튼을 클릭해 앱을 연 후 시도해주세요.");
+      } else {
+        setLoginError("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
@@ -202,6 +210,15 @@ export default function VideoGallery() {
         <div>
           <h2 className="text-4xl font-display font-black tracking-tight mb-2">KBO 갤러리</h2>
           <p className="text-slate-500 font-medium">하이라이트와 구단 영상을 공유해보세요.</p>
+          {loginError && (
+            <motion.p 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-2 text-xs font-bold text-red-500 bg-red-50 p-2 rounded-lg border border-red-100"
+            >
+              {loginError}
+            </motion.p>
+          )}
         </div>
 
         <div className="flex items-center gap-4">

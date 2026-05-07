@@ -10,7 +10,7 @@ import { TEAMS, SCHEDULE, TICKET_LINKS, NOTICE } from './constants';
 import NumberBaseball from './components/NumberBaseball';
 import VideoGallery from './components/VideoGallery';
 import CalendarView from './components/CalendarView';
-import { db, doc, getDoc, setDoc, increment } from './services/firebase';
+import { db, doc, getDoc, setDoc, increment, serverTimestamp } from './services/firebase';
 
 type Section = 'notice' | 'schedule' | 'teams' | 'tickets' | 'gallery' | 'game';
 
